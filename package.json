@@ -1,6 +1,7 @@
 {
-  "name": "course-3-module-4-external-apis-and-fetching-lab",
+  "name": "course-3-module-6-dom-testing-and-user-behavior-simulation-lab",
   "version": "1.0.0",
+  "description": "DOM testing and user behavior simulation lab",
   "main": "index.js",
   "scripts": {
     "test": "jest"
@@ -8,12 +9,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "eslint": "^9.8.0",
     "globals": "^15.8.0",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^27.0.1"
   }
 }
