@@ -19,46 +19,52 @@
 // ==============================
 
 // Add event listeners after DOM loads
+// ==============================
+// DOM Ready
+// ==============================
 document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("itemForm");
   const addButton = document.getElementById("addBtn");
   const inputField = document.getElementById("itemInput");
+  const list = document.getElementById("itemList");
+  const errorDiv = document.getElementById("error");
 
-  if (!addButton || !inputField) {
-    displayError("Required elements not found.");
-    return;
-  }
+  // ------------------------------
+  // Form Submission
+  // ------------------------------
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-  addButton.addEventListener("click", () => {
     const value = inputField.value.trim();
 
     if (value === "") {
-      displayError("Input cannot be empty.");
+      displayError("Input cannot be empty");
       return;
     }
 
+    clearError();
     addItem(value);
     inputField.value = "";
   });
+
+  // ------------------------------
+  // Button Click DOM Update
+  // ------------------------------
+  addButton.addEventListener("click", () => {
+    document.body.setAttribute("data-clicked", "true");
+  });
 });
 
-
 // ==============================
-// Step 2: DOM Manipulation Functions
+// Add Item to DOM
 // ==============================
-
-// Add a new item to the list
 function addItem(text) {
   const list = document.getElementById("itemList");
 
-  if (!list) {
-    displayError("List element not found.");
-    return;
-  }
-
-  const li = createElement("li", { class: "list-item" });
+  const li = createElement("li");
   li.textContent = text;
 
-  const removeBtn = createElement("button", { class: "remove-btn" });
+  const removeBtn = createElement("button");
   removeBtn.textContent = "Remove";
 
   removeBtn.addEventListener("click", () => {
@@ -69,42 +75,27 @@ function addItem(text) {
   list.appendChild(li);
 }
 
-
 // ==============================
-// Step 3: Error Handling
+// Error Handling
 // ==============================
-
-// Display error messages in the DOM
 function displayError(message) {
-  let errorDiv = document.getElementById("error");
-
-  if (!errorDiv) {
-    errorDiv = createElement("div", { id: "error" });
-    document.body.appendChild(errorDiv);
-  }
-
+  const errorDiv = document.getElementById("error");
   errorDiv.textContent = message;
   errorDiv.style.color = "red";
 }
 
-
-// ==============================
-// Step 4: Reusable Utilities
-// ==============================
-
-// Utility function to create elements with attributes
-function createElement(tag, attributes = {}) {
-  const element = document.createElement(tag);
-
-  for (const key in attributes) {
-    element.setAttribute(key, attributes[key]);
-  }
-
-  return element;
+function clearError() {
+  const errorDiv = document.getElementById("error");
+  errorDiv.textContent = "";
 }
 
+// ==============================
+// Utility
+// ==============================
+function createElement(tag) {
+  return document.createElement(tag);
+}
 
-// Export functions for Jest testing
 module.exports = {
   addItem,
   displayError,
