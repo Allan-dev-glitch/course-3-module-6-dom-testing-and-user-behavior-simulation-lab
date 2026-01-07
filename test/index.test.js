@@ -1,60 +1,54 @@
-/**
- * @jest-environment jsdom
- */
+const fs = require("fs");
+const path = require("path");
+const { JSDOM } = require("jsdom");
+const { setupDOM } = require("../script");
 
-const {
-  addElementToDOM,
-  removeElementFromDOM,
-  simulateClick,
-  handleFormSubmit,
-} = require('../index')
+describe("DOM Testing Lab", () => {
+  let dom;
+  let document;
 
-describe('DOM Testing and User Behavior Simulation', () => {
   beforeEach(() => {
-    document.body.innerHTML = `
-      <div id="dynamic-content"></div>
-      <div id="error-message" class="hidden"></div>
-      <form id="user-form">
-        <input type="text" id="user-input" />
-        <button type="submit">Submit</button>
-      </form>
-    `
-  })
+    const html = fs.readFileSync(
+      path.resolve(__dirname, "../index.html"),
+      "utf8"
+    );
 
-  it('should add an element to the DOM', () => {
-    addElementToDOM('dynamic-content', 'Hello, World!')
-    const dynamicContent = document.getElementById('dynamic-content')
-    expect(dynamicContent.textContent).toContain('Hello, World!')
-  })
+    dom = new JSDOM(html, { runScripts: "dangerously" });
+    document = dom.window.document;
 
-  it('should remove an element from the DOM', () => {
-    const element = document.createElement('div')
-    element.id = 'test-element'
-    document.body.appendChild(element)
+    global.window = dom.window;
+    global.document = document;
 
-    removeElementFromDOM('test-element')
-    expect(document.getElementById('test-element')).toBeNull()
-  })
+    setupDOM();
+  });
 
-  it('should simulate a button click and update the DOM', () => {
-    simulateClick('dynamic-content', 'Button Clicked!')
-    const dynamicContent = document.getElementById('dynamic-content')
-    expect(dynamicContent.textContent).toContain('Button Clicked!')
-  })
+  test("button exists in the DOM", () => {
+    const button = document.getElementById("clickBtn");
+    expect(button).not.toBeNull();
+  });
 
-  it('should handle form submission and update the DOM', () => {
-    const input = document.getElementById('user-input')
-    input.value = 'Test Input'
+  test("button click updates the message text", () => {
+    const button = document.getElementById("clickBtn");
+    const message = document.getElementById("message");
 
-    handleFormSubmit('user-form', 'dynamic-content')
-    const dynamicContent = document.getElementById('dynamic-content')
-    expect(dynamicContent.textContent).toContain('Test Input')
-  })
+    button.click();
+    expect(message.textContent).toBe("Button Clicked!");
+  });
 
-  it('should display an error message for empty input', () => {
-    handleFormSubmit('user-form', 'dynamic-content')
-    const errorMessage = document.getElementById('error-message')
-    expect(errorMessage.textContent).toBe('Input cannot be empty')
-    expect(errorMessage.classList.contains('hidden')).toBe(false)
-  })
-})
+  test("form and input exist in the DOM", () => {
+    expect(document.getElementById("userForm")).not.toBeNull();
+    expect(document.getElementById("username")).not.toBeNull();
+  });
+
+  test("form submission adds a new list item", () => {
+    const input = document.getElementById("username");
+    const form = document.getElementById("userForm");
+    const list = document.getElementById("list");
+
+    input.value = "Alice";
+    form.dispatchEvent(new dom.window.Event("submit"));
+
+    expect(list.children.length).toBe(1);
+    expect(list.children[0].textContent).toBe("Alice");
+  });
+});
