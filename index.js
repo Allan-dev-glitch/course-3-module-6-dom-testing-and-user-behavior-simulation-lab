@@ -1,103 +1,65 @@
-// Step 1: Simulate User Behavior
-// - Add event listeners for button clicks and form submissions.
-// - Use JavaScript to dynamically update the DOM based on user actions.
-
-// Step 2: DOM Manipulation Functions
-// - Implement functions to add, update, and remove DOM elements.
-// - Ensure all elements are dynamically created with appropriate attributes and content.
-
-// Step 3: Error Handling
-// - Display error messages in the DOM for invalid inputs or missing elements.
-// - Create reusable functions to handle common error cases.
-
-// Step 4: Reusable Utilities
-// - Create modular utility functions, such as createElement(tag, attributes).
-// - Ensure all functions follow DRY principles for maintainability.
-
-// ==============================
-// Step 1: Simulate User Behavior
-// ==============================
-
-// Add event listeners after DOM loads
-// ==============================
-// DOM Ready
-// ==============================
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("itemForm");
-  const addButton = document.getElementById("addBtn");
-  const inputField = document.getElementById("itemInput");
-  const list = document.getElementById("itemList");
-  const errorDiv = document.getElementById("error");
+  const clickButton = document.getElementById("simulate-click");
+  const form = document.getElementById("user-form");
+  const input = document.getElementById("user-input");
+  const content = document.getElementById("dynamic-content");
+  const errorMessage = document.getElementById("error-message");
 
-  // ------------------------------
-  // Form Submission
-  // ------------------------------
+  // -----------------------------
+  // Button click simulation
+  // -----------------------------
+  clickButton.addEventListener("click", () => {
+    const p = document.createElement("p");
+    p.textContent = "Button was clicked";
+    content.appendChild(p);
+  });
+
+  // -----------------------------
+  // Form submission
+  // -----------------------------
   form.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const value = inputField.value.trim();
+    const value = input.value.trim();
 
     if (value === "") {
-      displayError("Input cannot be empty");
+      showError("Input cannot be empty");
       return;
     }
 
     clearError();
     addItem(value);
-    inputField.value = "";
+    input.value = "";
   });
 
-  // ------------------------------
-  // Button Click DOM Update
-  // ------------------------------
-  addButton.addEventListener("click", () => {
-    document.body.setAttribute("data-clicked", "true");
-  });
+  // -----------------------------
+  // Add item to DOM
+  // -----------------------------
+  function addItem(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove";
+
+    removeBtn.addEventListener("click", () => {
+      div.remove();
+    });
+
+    div.appendChild(removeBtn);
+    content.appendChild(div);
+  }
+
+  // -----------------------------
+  // Error handling
+  // -----------------------------
+  function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.classList.remove("hidden");
+  }
+
+  function clearError() {
+    errorMessage.textContent = "";
+    errorMessage.classList.add("hidden");
+  }
 });
-
-// ==============================
-// Add Item to DOM
-// ==============================
-function addItem(text) {
-  const list = document.getElementById("itemList");
-
-  const li = createElement("li");
-  li.textContent = text;
-
-  const removeBtn = createElement("button");
-  removeBtn.textContent = "Remove";
-
-  removeBtn.addEventListener("click", () => {
-    li.remove();
-  });
-
-  li.appendChild(removeBtn);
-  list.appendChild(li);
-}
-
-// ==============================
-// Error Handling
-// ==============================
-function displayError(message) {
-  const errorDiv = document.getElementById("error");
-  errorDiv.textContent = message;
-  errorDiv.style.color = "red";
-}
-
-function clearError() {
-  const errorDiv = document.getElementById("error");
-  errorDiv.textContent = "";
-}
-
-// ==============================
-// Utility
-// ==============================
-function createElement(tag) {
-  return document.createElement(tag);
-}
-
-module.exports = {
-  addItem,
-  displayError,
-  createElement
-};
