@@ -1,61 +1,73 @@
-/**
- * @jest-environment jsdom
- */
-
 // ==============================
-// DOM MANIPULATION FUNCTIONS
+// DOM Manipulation Functions
 // ==============================
 
-// Add element to the DOM
+// Add content to DOM
 function addDynamicContent(text) {
   const container = document.getElementById("dynamic-content");
-
-  const p = document.createElement("p");
+  const p = createElement("p");
   p.textContent = text;
 
+  // Add remove button for user interaction
+  const removeBtn = createElement("button");
+  removeBtn.textContent = "Remove";
+  removeBtn.addEventListener("click", () => {
+    removeDynamicContent(p);
+  });
+
+  p.appendChild(removeBtn);
   container.appendChild(p);
 }
 
-// Remove element from the DOM
-function removeDynamicContent() {
-  const container = document.getElementById("dynamic-content");
-
-  if (container.lastChild) {
-    container.removeChild(container.lastChild);
-  }
+// Remove content from DOM
+function removeDynamicContent(element) {
+  element.remove();
 }
 
-// Display error message
+// Show error in DOM
 function showError(message) {
   const errorDiv = document.getElementById("error-message");
   errorDiv.textContent = message;
   errorDiv.classList.remove("hidden");
 }
 
-// Clear error message
+// Clear error in DOM
 function clearError() {
   const errorDiv = document.getElementById("error-message");
   errorDiv.textContent = "";
   errorDiv.classList.add("hidden");
 }
 
+// Utility to create elements
+function createElement(tag) {
+  return document.createElement(tag);
+}
+
 // ==============================
-// USER INTERACTIONS
+// Event Listeners for User Behavior
 // ==============================
+
 document.addEventListener("DOMContentLoaded", () => {
   const button = document.getElementById("simulate-click");
   const form = document.getElementById("user-form");
   const input = document.getElementById("user-input");
 
-  // Simulate button click → update DOM
+  // Button click adds content or removes last content
   button.addEventListener("click", () => {
-    addDynamicContent("Button Clicked");
+    const container = document.getElementById("dynamic-content");
+
+    if (container.children.length > 0) {
+      // Remove the last element
+      container.lastChild.remove();
+    } else {
+      // Add new element
+      addDynamicContent("Button Clicked");
+    }
   });
 
-  // Handle form submission
+  // Form submission adds content
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-
     const value = input.value.trim();
 
     if (value === "") {
@@ -70,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==============================
-// EXPORTS (CRITICAL FOR AUTOGRADER)
+// Exports for Jest Testing
 // ==============================
 module.exports = {
   addDynamicContent,
