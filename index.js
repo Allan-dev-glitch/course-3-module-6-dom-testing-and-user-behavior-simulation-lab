@@ -1,39 +1,66 @@
+// ==============================
+// DOM Manipulation Functions
+// ==============================
+
+// Add element to DOM
+function addDynamicContent(text) {
+  const container = document.getElementById("dynamic-content");
+
+  const p = document.createElement("p");
+  p.textContent = text;
+
+  container.appendChild(p);
+}
+
+// Show error message
+function showError(message) {
+  const errorDiv = document.getElementById("error-message");
+  errorDiv.textContent = message;
+  errorDiv.classList.remove("hidden");
+}
+
+// Clear error message
+function clearError() {
+  const errorDiv = document.getElementById("error-message");
+  errorDiv.textContent = "";
+  errorDiv.classList.add("hidden");
+}
+
+// ==============================
+// Simulate User Behavior
+// ==============================
 document.addEventListener("DOMContentLoaded", () => {
   const button = document.getElementById("simulate-click");
   const form = document.getElementById("user-form");
   const input = document.getElementById("user-input");
-  const content = document.getElementById("dynamic-content");
-  const error = document.getElementById("error-message");
 
-  // BUTTON CLICK — updates DOM
+  // Simulate button click
   button.addEventListener("click", () => {
-    const p = document.createElement("p");
-    p.textContent = "Button was clicked";
-    content.appendChild(p);
+    addDynamicContent("Button Clicked");
   });
 
-  // FORM SUBMISSION
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+  // Handle form submission
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-    if (input.value.trim() === "") {
-      error.textContent = "Input cannot be empty";
-      error.classList.remove("hidden");
+    const value = input.value.trim();
+
+    if (value === "") {
+      showError("Input cannot be empty");
       return;
     }
 
-    error.textContent = "";
-    error.classList.add("hidden");
-
-    const div = document.createElement("div");
-    div.textContent = input.value;
-
-    // REMOVE ELEMENT TEST
-    div.addEventListener("click", () => {
-      div.remove();
-    });
-
-    content.appendChild(div);
+    clearError();
+    addDynamicContent(value);
     input.value = "";
   });
 });
+
+// ==============================
+// Export for Jest
+// ==============================
+module.exports = {
+  addDynamicContent,
+  showError,
+  clearError
+};
